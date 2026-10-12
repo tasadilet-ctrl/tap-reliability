@@ -1,0 +1,7 @@
+# The PyTorch TAPIR model code is imported from a tapnet checkout (see
+# scripts/setup.sh); these are what this repo needs on top of it.
+torch>=2.1
+numpy>=1.24
+mediapy>=1.2          # Lanczos resize, identical to upstream's loader
+einshape>=1.0         # required by tapnet.torch.utils
+dm-tree>=0.1          # required by tapnet.torch.tapir_model

@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.DS_Store
+
+# benchmark data and checkpoints: fetched by scripts/setup.sh, not redistributed
+data/
+checkpoints/
+
+# per-video raw predictions (regenerate with evaluate.py --save-predictions);
+# the summaries and analysis JSON they produce ARE tracked
+results/*/*.npz
+results/*/per_track.json
