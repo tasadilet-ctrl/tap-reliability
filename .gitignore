@@ -10,3 +10,7 @@ checkpoints/
 # the summaries and analysis JSON they produce ARE tracked
 results/*/*.npz
 results/*/per_track.json
+
+# upstream checkout, cloned by scripts/setup.sh at a pinned commit -- not
+# vendored here, and not a submodule (setup.sh pins it explicitly instead)
+third_party/
