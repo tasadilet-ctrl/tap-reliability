@@ -1,0 +1,12 @@
+{
+  "model": "tapir",
+  "query_mode": "first",
+  "n": 28174,
+  "delta": 6.0,
+  "frac_bad": 0.1442819620927096,
+  "auroc_cycle": 0.6646257921370536,
+  "auroc_trained": 0.9473658303715643,
+  "auroc_combined": 0.8498263447523106,
+  "corr": 0.11870504760312191,
+  "median_cycle_err": 3.7586283683776855
+}

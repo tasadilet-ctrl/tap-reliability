@@ -1,0 +1,12 @@
+{
+  "model": "bootstapir",
+  "query_mode": "first",
+  "n": 28174,
+  "delta": 6.0,
+  "frac_bad": 0.112692553418045,
+  "auroc_cycle": 0.6914753692509905,
+  "auroc_trained": 0.9362521083520506,
+  "auroc_combined": 0.8356810807865386,
+  "corr": 0.17685603170927716,
+  "median_cycle_err": 2.3665592670440674
+}

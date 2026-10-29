@@ -111,6 +111,38 @@ gross errors by more than half. The same shape holds in all four configs
 (`results/confidence_*.json`). This needs no ground truth, so it transfers to
 unlabelled video — which is the point.
 
+## Part 3 — how much of that is free? (cycle consistency)
+
+The uncertainty head had to be trained. A tracker can estimate its own
+reliability without one: track forward, re-track the reversed video from where
+the forward pass ended, and measure how far the two trajectories disagree.
+
+    cycle_error[q, t] = || forward[q, t] - backward[q, t] ||
+
+No head, no labels, one extra model pass. Scored on the same 28,174 predictions
+against the same event (error > 6 px):
+
+| predictor | TAPIR | BootsTAPIR | needs training? |
+|---|---|---|---|
+| cycle error | 0.665 | 0.691 | no |
+| **σ(expected_dist)** | **0.947** | **0.936** | yes |
+| naive mean of the two | 0.850 | 0.836 | — |
+
+**The trained head is worth a great deal.** Cycle consistency is clearly better
+than chance, so it is a usable fallback where no uncertainty head exists — but
+it recovers only a fraction of the trained head's discrimination, 0.67 against
+0.95. On this benchmark, training the head is justified rather than redundant.
+
+The two scores are close to independent (correlation 0.12 and 0.18), so they
+are not measuring the same thing. The naive mean scoring *below* the head alone
+says only that equal weighting is the wrong way to combine a strong signal with
+a weak one; it is not evidence that the weak one adds nothing. A fitted
+combiner is untested here, and would need a held-out split to be honest.
+
+One methodological note worth recording: on a 2-video subset cycle consistency
+looked far stronger (0.813 against the head's 0.888). Across all 30 videos the
+gap is three times wider. Two videos were not enough to rank these predictors.
+
 ## Reproducing
 
 ```bash
@@ -118,6 +150,7 @@ bash scripts/setup.sh          # tapnet checkout (pinned), DAVIS, 2 checkpoints:
 python -m tap_reliability.evaluate --model tapir --query-mode first \
     --tapnet-root third_party/tapnet --save-predictions
 python -m tap_reliability.confidence --pred-dir results/tapir_first
+python -m tap_reliability.cycle --model tapir        # the training-free baseline
 ```
 
 About 2 minutes per configuration for `first` and ~25 for `strided` on an
@@ -132,9 +165,9 @@ from the saved predictions in seconds.
 - **δ = 6 px is the trained threshold**, so the head is being scored on exactly
   the event it was fit to. Calibration at other thresholds is a different
   question and is not claimed.
-- **No comparison against a training-free baseline yet.** Forward–backward
-  cycle consistency would say how much of this a tracker gets for free without
-  an uncertainty head. That run is not done.
+- **δ = 6 px is the trained threshold** for the head, so cycle consistency is
+  being scored on the head's home ground. A different threshold is a different
+  question and is not claimed.
 - These are the published checkpoints, evaluated as released. Nothing is
   retrained.
 
